@@ -205,7 +205,7 @@
 #define UART_UDIVSLOT_VAL	0xDDDD
 #endif
 
-#define DEBUG_UART			1
+#define DEBUG_UART			3
 #if (DEBUG_UART == 0)
 	#define UART_OFFSET		ELFIN_UART0_OFFSET
 	#define BOOTARGS_UART	"console=ttySAC0"
