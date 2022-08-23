@@ -3,7 +3,7 @@
 typedef unsigned int(*copy_sd_mmc_to_mem)
 	(unsigned int channel, unsigned int start_block, unsigned short block_size, unsigned int *dst, unsigned int with_init);
 
-int load_image_from_sd_mmc(void)
+int load_kernel_from_sd_mmc(void)
 {
 	unsigned int sd_ch;
 	unsigned int sd_idx;
@@ -44,6 +44,37 @@ int load_image_from_sd_mmc(void)
 		}
 	}
 
+	if (ret == 0) {
+		uart_puts("copy error!\r\n");
+		return -1;
+	}
+
+	uart_puts("done.\r\n");
+
+	return 0;
+}
+
+int load_uboot_from_sd_mmc(void)
+{
+	unsigned int sd_ch;
+	unsigned int sd_idx;
+	unsigned int ret;
+
+	sd_ch = *(volatile unsigned int *)(0xD0037488);
+	copy_sd_mmc_to_mem copy_lba = (copy_sd_mmc_to_mem)(*(unsigned int *)(0xD0037F98));
+
+	uart_puts("load uboot...\r\n");
+
+	if (sd_ch == 0xEB000000) {
+		sd_idx = 0;
+	} else if (sd_ch == 0xEB200000) {
+		sd_idx = 2;
+	} else {
+		uart_puts("sd_ch error!\r\n");
+		return -1;
+	}
+	
+	ret = copy_lba(sd_idx, UBOOT_LBA_OFFSET, UBOOT_LBA_SIZE, (unsigned int *)UBOOT_LOAD_ADDR, 0);
 	if (ret == 0) {
 		uart_puts("copy error!\r\n");
 		return -1;

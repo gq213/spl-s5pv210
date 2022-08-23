@@ -55,6 +55,54 @@ static void boot_prep_linux(void)
 	setup_end_tag();
 }
 
+#if !CONFIG_SYS_ICACHE_OFF
+static inline unsigned int get_cr(void)
+{
+	unsigned int val;
+
+	asm volatile("mrc p15, 0, %0, c1, c0, 0	@ get CR" : "=r" (val)
+							  :
+							  : "cc");
+
+	return val;
+}
+
+static inline void set_cr(unsigned int val)
+{
+	asm volatile("mcr p15, 0, %0, c1, c0, 0	@ set CR" :
+							  : "r" (val)
+							  : "cc");
+	isb();
+}
+
+static void icache_disable(void)
+{
+	unsigned int reg;
+
+	reg = get_cr();
+
+	set_cr(reg & ~CR_I);
+}
+
+static void invalidate_icache_all(void)
+{
+	/*
+	 * Invalidate all instruction caches to PoU.
+	 * Also flushes branch target cache.
+	 */
+	asm volatile ("mcr p15, 0, %0, c7, c5, 0" : : "r" (0));
+
+	/* Invalidate entire branch predictor array */
+	asm volatile ("mcr p15, 0, %0, c7, c5, 6" : : "r" (0));
+
+	/* Full system DSB - make sure that the invalidation is complete */
+	dsb();
+
+	/* ISB - make sure the instruction stream sees it */
+	isb();
+}
+#endif
+
 void jump_to_image_linux(void)
 {
 	unsigned long machid = 2457;
@@ -64,6 +112,12 @@ void jump_to_image_linux(void)
 		(image_entry_arg_t)(unsigned long)KERNEL_LOAD_ADDR;
 
 	boot_prep_linux();
+	
+	#if !CONFIG_SYS_ICACHE_OFF
+	#warning "turn off I-cache"
+	icache_disable();
+	invalidate_icache_all();
+	#endif
 	
 	image_entry(0, machid, g_tagged_list);
 }

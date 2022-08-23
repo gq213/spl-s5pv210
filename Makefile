@@ -25,9 +25,6 @@ all:$(TARGET)
 spl_signed.bin:spl.bin
 	gcc -Wall tools/signed_tool.c -o signed_tool
 	./signed_tool spl.bin spl_signed.bin
-	# sudo dd if=spl_signed.bin of=/dev/sdd bs=512 seek=1
-	# sudo dd if=zImagedtb_pad of=/dev/sdd bs=512 seek=1073
-	# sync
 
 spl.bin:$(OBJ_S) $(OBJ_C)
 	$(LD) -T src/spl.lds -Ttext 0xD0020010 -o spl.elf $^

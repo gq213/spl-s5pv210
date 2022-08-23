@@ -51,3 +51,21 @@ MVN指令不同的是在传送之前，将被传送的对象先按位取反，�
 空堆栈，堆栈指针指向下一个数据项放入的空位置。
 0xD003_7D80 --> 0xD003_7780 1.5k
 
+1. 对于32bit的arm处理器，bootloader启动内核时,会设置r0,r1,r2三个寄存器,
+r0一般设置为0;
+r1一般设置为machine id (在使用设备树时该参数没有被使用);
+r2一般设置ATAGS(使用设备树之前)或DTB的开始地址(使用设备树之后)
+
+在linux内核启动之前要求如下:
+①、关闭 MMU。
+②、关闭 D-cache。（数据缓存)
+③、 I-Cache 无所谓。(指令缓存)
+④、 r0=0。
+⑤、 r1=machine nr(也就是机器 ID)。
+⑥、 r2=atags 或者设备树(dtb)首地址
+
+/*
+ * Kernel startup entry point.
+ * MMU = off, D-cache = off, I-cache = dont care, r0 = 0,
+ * r1 = machine nr, r2 = atags or dtb pointer.
+ */

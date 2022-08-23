@@ -15,7 +15,7 @@
 #endif
 
 #define SYMBOL_NAME(X)		X
-#define SYMBOL_NAME_LABEL(X)	X:
+#define SYMBOL_NAME_LABEL(X)	X##:
 
 #ifndef __ALIGN
 #define __ALIGN .align		0

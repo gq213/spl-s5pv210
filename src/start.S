@@ -13,6 +13,7 @@
  */
 
 #include "linkage.h"
+#include "system.h"
 
 /*************************************************************************
  *
@@ -50,7 +51,7 @@ save_boot_params_ret:
  */
 	/* Set V=0 in CP15 SCTLR register - for VBAR to point to vector */
 	mrc	p15, 0, r0, c1, c0, 0	@ Read CP15 SCTLR Register
-	bic	r0, #(1 << 13)		@ V = 0
+	bic	r0, #CR_V		@ V = 0
 	mcr	p15, 0, r0, c1, c0, 0	@ Write CP15 SCTLR Register
 
 	/* Set vector address in CP15 VBAR register */
@@ -105,9 +106,11 @@ ENTRY(cpu_init_cp15)
 	bic	r0, r0, #0x00000007	@ clear bits 2:0 (-CAM)
 	orr	r0, r0, #0x00000002	@ set bit 1 (--A-) Align
 	orr	r0, r0, #0x00000800	@ set bit 11 (Z---) BTB
-#if 1
+#if CONFIG_SYS_ICACHE_OFF
+	#warning "ICACHE_OFF"
 	bic	r0, r0, #0x00001000	@ clear bit 12 (I) I-cache
 #else
+	#warning "ICACHE_ON"
 	orr	r0, r0, #0x00001000	@ set bit 12 (I) I-cache
 #endif
 	mcr	p15, 0, r0, c1, c0, 0

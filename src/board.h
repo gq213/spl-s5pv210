@@ -253,9 +253,13 @@ faster.
  */
 #define KERNEL_LOAD_ADDR			0x20008000	// offset=32k
 
+#define BOARD_TYPE_ADDR				0x20000000	// offset=0
+
+#define UBOOT_LOAD_ADDR				0x24800000	// offset=72M
+
 /*
  * bootloader(sd)
- * |512|SPL(16k)|ENV(8k)|UBOOT(512k)|KERNEL(16M)
+ * |512|spl(16k)|env(8k)|uboot(512k)|kernel(16M)|p1_rootfs(64M)|p2_data(~)
  */
 #define UBOOT_LBA_OFFSET	49
 #define UBOOT_LBA_SIZE		1024
