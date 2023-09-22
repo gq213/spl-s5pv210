@@ -2,6 +2,13 @@
 从uboot里面提取部分代码，完成最基础功能的初始化，通过按键判断引导uboot或kernel。
 
 
+按键
+
+sate210：sw1键
+
+tq210v4：下键
+
+
 编译适用于sate210的spl
 
 修改src/board.h

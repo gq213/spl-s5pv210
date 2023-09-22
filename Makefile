@@ -1,5 +1,5 @@
 
-COMPILE_PATH  = /mnt/disk/210/toolchain/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin
+COMPILE_PATH  = $(shell pwd)/../toolchain/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin
 CROSS_COMPILE ?= $(COMPILE_PATH)/arm-linux-gnueabihf-
 CC			= $(CROSS_COMPILE)gcc
 LD			= $(CROSS_COMPILE)ld.bfd
